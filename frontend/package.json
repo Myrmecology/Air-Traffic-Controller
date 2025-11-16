@@ -1,0 +1,29 @@
+{
+  "name": "atc-simulator-frontend",
+  "version": "1.0.0",
+  "description": "Air Traffic Controller Simulator - Frontend",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 3000",
+    "dev": "python -m http.server 3000",
+    "build": "echo 'No build step required for vanilla JS'",
+    "lint": "eslint src/js/**/*.js"
+  },
+  "keywords": [
+    "atc",
+    "simulator",
+    "air-traffic-control",
+    "radar",
+    "aviation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.50.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
