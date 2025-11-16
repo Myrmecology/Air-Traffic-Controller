@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Air Traffic Controller Simulator</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/radar.css">
+    <link rel="stylesheet" href="src/css/ui.css">
+    
+    <!-- Preload WASM modules -->
+    <link rel="preload" href="../wasm/physics.wasm" as="fetch" type="application/wasm" crossorigin>
+    <link rel="preload" href="../wasm/safety.wasm" as="fetch" type="application/wasm" crossorigin>
+</head>
+<body>
+    <!-- Main Container -->
+    <div id="app-container">
+        
+        <!-- Header -->
+        <header id="main-header">
+            <div class="header-left">
+                <h1>AIR TRAFFIC CONTROL</h1>
+                <span id="facility-name">TERMINAL APPROACH</span>
+            </div>
+            <div class="header-center">
+                <div id="clock-display">00:00:00 UTC</div>
+            </div>
+            <div class="header-right">
+                <div id="connection-status" class="status-disconnected">OFFLINE</div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div id="main-content">
+            
+            <!-- Left Sidebar - Flight Strips -->
+            <aside id="left-sidebar">
+                <div class="sidebar-header">
+                    <h3>ACTIVE FLIGHTS</h3>
+                </div>
+                <div id="flight-strips-container">
+                    <!-- Flight strips will be dynamically added here -->
+                </div>
+            </aside>
+
+            <!-- Center - Radar Display -->
+            <main id="radar-container">
+                <canvas id="radar-canvas"></canvas>
+                
+                <!-- Radar Overlay UI -->
+                <div id="radar-overlay">
+                    <div id="range-indicator">RANGE: 50 NM</div>
+                    <div id="mode-indicator">MODE: APPROACH</div>
+                </div>
+
+                <!-- Command Input -->
+                <div id="command-panel">
+                    <div id="selected-aircraft-info">
+                        <span id="selected-callsign">NO AIRCRAFT SELECTED</span>
+                    </div>
+                    <div id="command-buttons">
+                        <button class="cmd-btn" data-cmd="heading">HEADING</button>
+                        <button class="cmd-btn" data-cmd="altitude">ALTITUDE</button>
+                        <button class="cmd-btn" data-cmd="speed">SPEED</button>
+                        <button class="cmd-btn" data-cmd="approach">APPROACH</button>
+                        <button class="cmd-btn" data-cmd="cleared">CLEARED TO LAND</button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Sidebar - Information Panels -->
+            <aside id="right-sidebar">
+                
+                <!-- Weather Panel -->
+                <div class="info-panel">
+                    <h3>WEATHER</h3>
+                    <div id="weather-display">
+                        <div class="weather-item">
+                            <span class="label">WIND:</span>
+                            <span id="wind-data">270/10</span>
+                        </div>
+                        <div class="weather-item">
+                            <span class="label">VIS:</span>
+                            <span id="visibility-data">10 SM</span>
+                        </div>
+                        <div class="weather-item">
+                            <span class="label">CEILING:</span>
+                            <span id="ceiling-data">BKN 5000</span>
+                        </div>
+                        <div class="weather-item">
+                            <span class="label">ALTIM:</span>
+                            <span id="altimeter-data">29.92</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert Panel -->
+                <div class="info-panel" id="alert-panel">
+                    <h3>ALERTS</h3>
+                    <div id="alerts-container">
+                        <div class="alert-message">SYSTEM READY</div>
+                    </div>
+                </div>
+
+                <!-- Statistics Panel -->
+                <div class="info-panel">
+                    <h3>STATISTICS</h3>
+                    <div id="stats-display">
+                        <div class="stat-item">
+                            <span class="label">AIRCRAFT:</span>
+                            <span id="stat-aircraft">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">LANDINGS:</span>
+                            <span id="stat-landings">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">SCORE:</span>
+                            <span id="stat-score">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">VIOLATIONS:</span>
+                            <span id="stat-violations">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario Controls -->
+                <div class="info-panel">
+                    <h3>SCENARIO</h3>
+                    <select id="scenario-select">
+                        <option value="1">Level 1 - Basic</option>
+                        <option value="2">Level 2 - Moderate</option>
+                        <option value="3">Level 3 - Busy</option>
+                        <option value="4">Level 4 - Complex</option>
+                        <option value="5">Level 5 - Emergency</option>
+                    </select>
+                    <button id="start-scenario-btn" class="control-btn">START SCENARIO</button>
+                    <button id="pause-btn" class="control-btn">PAUSE</button>
+                    <button id="reset-btn" class="control-btn">RESET</button>
+                </div>
+
+            </aside>
+
+        </div>
+
+        <!-- Footer - Command History -->
+        <footer id="main-footer">
+            <div id="command-history">
+                <div class="history-header">COMMAND HISTORY</div>
+                <div id="history-log">
+                    <!-- Command history will appear here -->
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Modal for Command Input -->
+    <div id="command-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">ENTER COMMAND</h3>
+            <input type="text" id="command-input" placeholder="Enter value...">
+            <div class="modal-buttons">
+                <button id="modal-confirm" class="modal-btn">CONFIRM</button>
+                <button id="modal-cancel" class="modal-btn">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <h2>INITIALIZING ATC SYSTEM</h2>
+            <div class="loading-bar">
+                <div id="loading-progress"></div>
+            </div>
+            <p id="loading-status">Loading WASM modules...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script type="module" src="src/js/main.js"></script>
+
+</body>
+</html>
