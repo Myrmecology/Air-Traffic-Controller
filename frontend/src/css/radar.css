@@ -51,15 +51,16 @@
 
 #command-panel {
     position: absolute;
-    bottom: var(--spacing-lg);
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(26, 31, 46, 0.95);
+    background-color: rgba(10, 14, 39, 0.95);
     border: 2px solid var(--color-radar-primary);
     border-radius: var(--border-radius);
-    padding: var(--spacing-md);
-    min-width: 700px;
+    padding: var(--spacing-sm);
+    min-width: 600px;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    z-index: 100;
 }
 
 #selected-aircraft-info {
