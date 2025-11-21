@@ -2,10 +2,10 @@
 
 ## Summary
 
-JavaScript
-C++
-Python
-Rust
+# JavaScript
+# C++
+# Python
+# Rust
 
 The Air Traffic Controller Simulator is a professional-grade, browser-based application that provides an authentic air traffic control experience. This project demonstrates advanced software engineering principles through the seamless integration of four distinct programming languages: JavaScript, Python, C++, and Rust. Each language serves a specific, optimized purpose within the system architecture, creating a high-performance real-time simulation.
 
