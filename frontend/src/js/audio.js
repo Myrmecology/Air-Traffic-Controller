@@ -16,6 +16,15 @@ export class AudioManager {
             // Create Audio Context
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
+            // Resume context on first user interaction (required by browsers)
+            const resumeContext = () => {
+                if (this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+                document.removeEventListener('click', resumeContext);
+            };
+            document.addEventListener('click', resumeContext);
+            
             // Generate sound effects procedurally
             this.generateSounds();
             
@@ -30,10 +39,10 @@ export class AudioManager {
         // This avoids needing external audio files
         
         this.sounds.set('radar_sweep', {
-            frequency: 880,
-            duration: 0.05,
+            frequency: 1200,
+            duration: 0.08,
             type: 'sine',
-            volume: 0.1
+            volume: 0.15
         });
         
         this.sounds.set('command', {

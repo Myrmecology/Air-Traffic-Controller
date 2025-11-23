@@ -14,8 +14,10 @@ export class RadarDisplay {
         this.scale = 1;
         this.radarRange = 50; // nautical miles
         
-        this.sweepAngle = 0;
+        this.sweepAngle = 0;  // Make sure this line exists
         this.sweepSpeed = 2; // degrees per frame
+        
+        // ... rest of constructor
         
         this.colors = {
             background: '#000000',
@@ -56,8 +58,8 @@ export class RadarDisplay {
     }
 
     render() {
-        // Clear canvas
-        this.ctx.fillStyle = this.colors.background;
+        // Don't clear canvas completely - fade it for persistence effect
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Draw radar elements
@@ -163,8 +165,21 @@ export class RadarDisplay {
     }
 
     drawRadarSweep() {
+        // Store previous angle
+        const prevAngle = this.sweepAngle;
+        
         // Rotate sweep angle
         this.sweepAngle = (this.sweepAngle + this.sweepSpeed) % 360;
+        
+        // Play sound every 45 degrees (8 times per rotation)
+        const prevSegment = Math.floor(prevAngle / 45);
+        const currentSegment = Math.floor(this.sweepAngle / 45);
+        
+        if (prevSegment !== currentSegment) {
+            if (this.simulator.audioManager) {
+                this.simulator.audioManager.playRadarSweep();
+            }
+        }
         
         const rad = (this.sweepAngle - 90) * Math.PI / 180;
         const radius = this.radarRange * this.scale;

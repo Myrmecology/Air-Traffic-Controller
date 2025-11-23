@@ -288,15 +288,48 @@ class ATCSimulator {
     }
 
     handleAircraftData(data) {
+        // If empty array, clear everything
+        if (!data || data.length === 0) {
+            this.aircraft.clear();
+            this.selectedAircraftId = null;
+            this.stats.aircraftCount = 0;
+            
+            // Clear all flight strips
+            const container = document.getElementById('flight-strips-container');
+            if (container) {
+                container.innerHTML = '';
+            }
+            this.uiManager.flightStrips.clear();
+            this.uiManager.clearSelectedAircraft();
+            return;
+        }
+        
+        // Get IDs from server data
+        const serverIds = new Set(data.map(a => a.id));
+        
+        // Remove aircraft not in server data
+        const toRemove = [];
+        this.aircraft.forEach((aircraft, id) => {
+            if (!serverIds.has(id)) {
+                toRemove.push(id);
+            }
+        });
+        toRemove.forEach(id => {
+            this.aircraft.delete(id);
+            this.uiManager.removeFlightStrip(id);
+        });
+        
+        // Update or add aircraft from server
         data.forEach(aircraftData => {
             if (!this.aircraft.has(aircraftData.id)) {
-                // New aircraft
                 this.addAircraft(aircraftData);
             } else {
-                // Update existing aircraft
                 this.updateAircraftData(aircraftData);
             }
         });
+        
+        // Update aircraft count
+        this.stats.aircraftCount = this.aircraft.size;
     }
 
     addAircraft(data) {
@@ -309,10 +342,10 @@ class ATCSimulator {
             altitude: data.altitude,
             heading: data.heading,
             speed: data.speed,
-            targetAltitude: data.altitude,
-            targetHeading: data.heading,
-            targetSpeed: data.speed,
-            inConflict: false,
+            targetAltitude: data.targetAltitude || data.altitude,
+            targetHeading: data.targetHeading || data.heading,
+            targetSpeed: data.targetSpeed || data.speed,
+            inConflict: data.inConflict || false,
             isSelected: false
         });
         
@@ -323,13 +356,25 @@ class ATCSimulator {
     updateAircraftData(data) {
         const aircraft = this.aircraft.get(data.id);
         if (aircraft) {
-            Object.assign(aircraft, data);
+            aircraft.x = data.x;
+            aircraft.y = data.y;
+            aircraft.altitude = data.altitude;
+            aircraft.heading = data.heading;
+            aircraft.speed = data.speed;
+            aircraft.targetAltitude = data.targetAltitude || data.altitude;
+            aircraft.targetHeading = data.targetHeading || data.heading;
+            aircraft.targetSpeed = data.targetSpeed || data.speed;
+            aircraft.inConflict = data.inConflict || false;
+            
+            // Update flight strip
+            this.uiManager.updateFlightStrip(aircraft);
         }
     }
 
     removeAircraft(id) {
         this.aircraft.delete(id);
         this.stats.aircraftCount = this.aircraft.size;
+        this.uiManager.removeFlightStrip(id);
         
         if (this.selectedAircraftId === id) {
             this.selectedAircraftId = null;
@@ -416,6 +461,14 @@ class ATCSimulator {
             violations: 0
         };
         
+        // Reset UI
+        this.uiManager.reset();
+        
+        // Clear radar
+        if (this.radarDisplay) {
+            this.radarDisplay.clear();
+        }
+        
         // Request scenario from server
         if (this.wsClient) {
             this.wsClient.sendMessage({
@@ -431,11 +484,13 @@ class ATCSimulator {
     }
 
     resetSimulation() {
+        // Clear local state
         this.aircraft.clear();
         this.selectedAircraftId = null;
         this.currentScenario = null;
         this.isPaused = false;
         
+        // Reset stats
         this.stats = {
             aircraftCount: 0,
             landings: 0,
@@ -443,10 +498,19 @@ class ATCSimulator {
             violations: 0
         };
         
+        // Reset UI
         this.uiManager.reset();
         
+        // Clear radar
         if (this.radarDisplay) {
             this.radarDisplay.clear();
+        }
+        
+        // Tell server to reset
+        if (this.wsClient) {
+            this.wsClient.sendMessage({
+                type: 'reset'
+            });
         }
     }
 

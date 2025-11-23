@@ -57,7 +57,16 @@ class WebSocketHandler:
         # Get scenario configuration
         scenario = Config.get_scenario(scenario_id)
         
-        # Initialize scenario in flight simulator
+        # IMPORTANT: Reset first, then start new scenario
+        self.flight_simulator.reset()
+        
+        # Send clear signal to client
+        await websocket.send_text(json.dumps({
+            "type": "aircraft_update",
+            "data": []
+        }))
+        
+        # Now start the new scenario
         self.flight_simulator.start_scenario(scenario)
         
         # Send confirmation
@@ -111,6 +120,12 @@ class WebSocketHandler:
     async def handle_reset(self, websocket: WebSocket):
         """Handle reset request"""
         self.flight_simulator.reset()
+        
+        # Send empty aircraft list to clear frontend
+        await websocket.send_text(json.dumps({
+            "type": "aircraft_update",
+            "data": []
+        }))
         
         await websocket.send_text(json.dumps({
             "type": "system_message",

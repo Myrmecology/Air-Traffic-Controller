@@ -318,13 +318,16 @@ export class UIManager {
         // Reset selected aircraft
         this.clearSelectedAircraft();
 
-        // Reset stats
+        // Reset stats display
         this.updateStats({
             aircraftCount: 0,
             landings: 0,
             score: 0,
             violations: 0
         });
+
+        // Reset pause button
+        this.updatePauseButton(false);
     }
 
     showToast(message, type = 'info') {

@@ -50,15 +50,14 @@
    ============================================ */
 
 #command-panel {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(10, 14, 39, 0.95);
+    position: fixed;
+    bottom: 130px;
+    left: 280px;
+    right: 300px;
+    background-color: rgba(10, 14, 39, 0.98);
     border: 2px solid var(--color-radar-primary);
     border-radius: var(--border-radius);
     padding: var(--spacing-sm);
-    min-width: 600px;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
     z-index: 100;
 }

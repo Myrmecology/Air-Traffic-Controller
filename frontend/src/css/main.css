@@ -582,3 +582,283 @@ body {
 .text-info {
     color: var(--color-info);
 }
+
+/* ============================================
+   ADVANCED VISUAL EFFECTS
+   ============================================ */
+
+/* Glowing borders on hover for panels */
+.info-panel:hover {
+    border-color: var(--color-radar-primary);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* Button glow effect on hover */
+.control-btn:hover,
+.cmd-btn:hover {
+    box-shadow: 0 0 10px var(--color-radar-primary),
+                inset 0 0 10px rgba(0, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Pulsing glow for ONLINE status */
+.status-connected {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px var(--color-success);
+    }
+    50% {
+        box-shadow: 0 0 20px var(--color-success), 0 0 30px var(--color-success);
+    }
+}
+
+/* CRT scanline effect overlay */
+#radar-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 255, 0.03) 0px,
+        rgba(0, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* CRT screen curvature effect */
+#radar-canvas {
+    border-radius: 4px;
+    box-shadow: inset 0 0 50px rgba(0, 255, 255, 0.1);
+}
+
+/* Animated gradient on header */
+#main-header {
+    background: linear-gradient(
+        135deg,
+        var(--color-bg-secondary) 0%,
+        #1a2540 50%,
+        var(--color-bg-secondary) 100%
+    );
+    background-size: 200% 200%;
+    animation: gradient-shift 10s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Text glow effect for selected aircraft */
+#selected-callsign {
+    text-shadow: 0 0 10px var(--color-radar-primary);
+    animation: text-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes text-glow {
+    0%, 100% { text-shadow: 0 0 5px var(--color-radar-primary); }
+    50% { text-shadow: 0 0 20px var(--color-radar-primary), 0 0 30px var(--color-radar-primary); }
+}
+
+/* Flight strip hover effect with slide */
+.flight-strip {
+    position: relative;
+    overflow: hidden;
+}
+
+.flight-strip::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s ease;
+}
+
+.flight-strip:hover::before {
+    left: 100%;
+}
+
+/* Alert messages slide in from right */
+.alert-message {
+    animation: slideInFromRight 0.3s ease;
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Command history entries fade in */
+.history-entry {
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Radar screen vignette effect */
+#radar-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        transparent 60%,
+        rgba(0, 0, 0, 0.3) 100%
+    );
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Button press animation */
+.control-btn:active,
+.cmd-btn:active,
+.modal-btn:active {
+    transform: translateY(0) scale(0.95);
+    box-shadow: 0 0 5px var(--color-radar-primary);
+}
+
+/* Statistics numbers count-up effect */
+.stat-item span:last-child {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.stat-item:hover span:last-child {
+    transform: scale(1.2);
+    color: var(--color-radar-primary);
+}
+
+/* Loading screen enhanced animation */
+#loading-progress {
+    box-shadow: 0 0 20px var(--color-radar-primary),
+                0 0 40px var(--color-radar-primary);
+    animation: loading-pulse 1s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px var(--color-radar-primary);
+    }
+    50% {
+        box-shadow: 0 0 30px var(--color-radar-primary), 0 0 50px var(--color-radar-primary);
+    }
+}
+
+/* Scenario dropdown enhanced hover */
+#scenario-select:hover {
+    border-color: var(--color-radar-primary);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+/* Command panel entrance animation */
+#command-panel {
+    animation: slideUpFade 0.3s ease;
+}
+
+@keyframes slideUpFade {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Clock display enhancement */
+#clock-display {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+#clock-display:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+/* Range and mode indicators glow */
+#range-indicator,
+#mode-indicator {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* Weather panel enhanced */
+.weather-item:hover {
+    background-color: rgba(0, 255, 255, 0.05);
+    padding-left: 8px;
+    transition: all 0.2s ease;
+}
+
+/* Critical alert strong pulse */
+.alert-critical {
+    animation: critical-pulse 0.5s infinite !important;
+}
+
+@keyframes critical-pulse {
+    0%, 100% {
+        background-color: rgba(255, 0, 0, 0.1);
+        transform: scale(1);
+    }
+    50% {
+        background-color: rgba(255, 0, 0, 0.3);
+        transform: scale(1.02);
+    }
+}
+
+/* Holographic effect on main title */
+#main-header h1 {
+    background: linear-gradient(
+        45deg,
+        var(--color-radar-primary),
+        #00ffaa,
+        var(--color-radar-primary)
+    );
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: hologram 3s ease infinite;
+}
+
+@keyframes hologram {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}

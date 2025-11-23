@@ -33,8 +33,13 @@ class FlightSimulator:
         """Start a new scenario"""
         logger.info(f"Starting scenario: {scenario['name']}")
         
-        # Reset simulation
-        self.reset()
+        # Fully reset simulation
+        self.aircraft.clear()
+        self.simulation_time = 0.0
+        self.is_paused = False
+        
+        # Reset generators
+        self.aircraft_generator.reset()
         
         # Set current scenario
         self.current_scenario = scenario
@@ -235,3 +240,5 @@ class FlightSimulator:
         self.simulation_time = 0.0
         self.is_paused = False
         self.current_scenario = None
+        self.aircraft_generator.reset()
+        self.scoring_system.reset()
